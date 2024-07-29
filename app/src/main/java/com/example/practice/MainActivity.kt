@@ -12,10 +12,52 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        main(4)
+        start()
     }
 
     var pointList = mutableListOf<Float>()
+
+    private fun start() {
+        var playerCount = 0
+
+        setContentView(R.layout.activity_start)
+
+        val startButton : Button = findViewById(R.id.startButton)
+        val selectPlayer : TextView = findViewById(R.id.selectPlayerCount)
+        val plusButton : Button = findViewById(R.id.playerPlusButton)
+        val minusButton : Button = findViewById(R.id.playerMinusButton)
+
+        plusButton.setOnClickListener {
+            playerCount++
+            selectPlayer.text = getString(R.string.selectPlayerCount, playerCount)
+        }
+        minusButton.setOnClickListener {
+            if (playerCount > 1) {
+                playerCount--
+                selectPlayer.text = getString(R.string.selectPlayerCount, playerCount)
+            }
+        }
+
+        startButton.setOnClickListener {
+            main(playerCount)
+        }
+    }
+
+    private fun end() {
+        setContentView(R.layout.activity_end)
+
+        val restartButton : Button = findViewById(R.id.restartButton)
+        val failPlayer : TextView = findViewById(R.id.failPlayer)
+        val failPlayerScore : TextView = findViewById(R.id.failPlayerScore)
+
+        val point = pointList.maxOrNull()
+        failPlayerScore.text = point.toString()
+        failPlayer.text = getString(R.string.currentPlayer, pointList.indexOf(point) + 1)
+
+        restartButton.setOnClickListener {
+            start()
+        }
+    }
 
     private fun main(player: Int) {
         var playerCount = 1
@@ -27,12 +69,12 @@ class MainActivity : AppCompatActivity() {
         var stage = 1
         var sec = 0f
         val timer: TextView = findViewById(R.id.tv_random)
-        val btn : Button = findViewById(R.id.btn_main)
+        val btn : Button = findViewById(R.id.gameStartButton)
         val goalTime : TextView = findViewById(R.id.tv_timer)
         val score: TextView = findViewById(R.id.score)
         val random = Random()
         val randomNum = (random.nextInt(1001))
-        var currentPlayer : TextView = findViewById(R.id.currentPlayer)
+        val currentPlayer : TextView = findViewById(R.id.playerCount)
 
 
         goalTime.text = ((randomNum.toFloat())/100).toString()
@@ -68,8 +110,7 @@ class MainActivity : AppCompatActivity() {
                         playerCount++
                         currentPlayer.text = getString(R.string.currentPlayer, playerCount)
                     } else {
-                        btn.text = "게임종료"
-                        currentPlayer.text = pointList.toString()
+                        end()
                     }
                 }
             }
